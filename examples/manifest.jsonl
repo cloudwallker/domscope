@@ -1,0 +1,8 @@
+{"sample_id":"A1","html_path":"html/A1.html","split":"train","source":"synthetic","label":0,"hostname":"a.example","encoding":"utf-8"}
+{"sample_id":"A2","html_path":"html/A2.html","split":"train","source":"synthetic","label":0,"hostname":"b.example","encoding":"utf-8"}
+{"sample_id":"B1","html_path":"html/B1.html","split":"train","source":"synthetic","label":0,"hostname":"docs.example","encoding":"utf-8"}
+{"sample_id":"C1","html_path":"html/C1.html","split":"train","source":"synthetic","label":1,"hostname":"c.example","encoding":"utf-8"}
+{"sample_id":"A3","html_path":"html/A3.html","split":"test","source":"synthetic","label":1,"hostname":"other.example","encoding":"utf-8"}
+{"sample_id":"A4","html_path":"html/A4.html","split":"test","source":"synthetic","label":0,"hostname":"a.example","encoding":"utf-8"}
+{"sample_id":"D1","html_path":"html/D1.html","split":"test","source":"synthetic","label":1,"hostname":"new.example","encoding":"utf-8"}
+{"sample_id":"E1","html_path":"html/E1.html","split":"test","source":"synthetic","label":0,"hostname":"help.example","encoding":"utf-8"}
