@@ -12,6 +12,8 @@ The CLI computes the audit once. A read-only Streamlit viewer presents the repor
 
 *Actual CLI results from the bundled eight-page synthetic demo. This chart shows tool behavior, not detector performance or real-world prevalence.*
 
+![domscope](docs/images/cartoon-infographic.png)
+
 ## Run the synthetic demo
 
 Use **Python 3.12 or later**. Open a terminal in the project directory containing `pyproject.toml`.

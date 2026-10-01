@@ -12,6 +12,8 @@ CLI 负责计算，只读 Streamlit 页面负责查看报告、筛选样本和�
 
 *图片来自内置八页合成样本的真实 CLI 输出，用于展示工具行为，不代表真实网页中的频率或检测器性能。*
 
+![domscope](docs/images/cartoon-infographic.png)
+
 ## 运行合成演示
 
 需要 **Python 3.12 或更新版本**。在包含 `pyproject.toml` 的项目目录打开终端。
