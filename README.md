@@ -4,9 +4,9 @@ English | [中文](README_ZH.md)
 
 An offline audit tool for structural overlap and label conflicts in HTML datasets. DOMScope compares saved HTML pages as raw bytes, normalized DOM trees, and DOM plus complete hostname. Its reports trace each result back to individual samples.
 
-离线检查网页数据中的结构重合、跨划分重复与标签冲突。
+离线检查网页数据中的结构重合、跨划分重复与标签冲突。DOMScope 对保存好的 HTML 比较原始字节、规范 DOM、DOM＋完整 hostname 三类指纹，并将结果追溯到具体样本。
 
-The CLI computes the audit once. A read-only Streamlit viewer presents the report, sample filters and source snippets. No GPU, model weights or API key is required. The tool does not fetch websites or train a model.
+The CLI audits supplied HTML files locally on the CPU. A read-only Streamlit viewer presents the report, sample filters and source snippets. No GPU, model weights or API key is required.
 
 ![Synthetic demo audit results: raw bytes 25%, normalized DOM 50%, DOM plus hostname 25% test-to-train overlap](docs/images/demo-results.png)
 

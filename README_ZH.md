@@ -4,9 +4,9 @@
 
 离线检查网页数据中的结构重合、跨划分重复与标签冲突。DOMScope 对保存好的 HTML 分别计算原始字节、规范 DOM、DOM＋完整 hostname 三类指纹，并将结果追溯到具体样本。
 
-An offline audit tool for structural overlap and label conflicts in HTML datasets.
+An offline audit tool for structural overlap and label conflicts in HTML datasets. DOMScope compares saved pages as raw bytes, normalized DOM trees, and DOM plus complete hostname, tracing results to individual samples.
 
-CLI 负责计算，只读 Streamlit 页面负责查看报告、筛选样本和对照源码片段。运行不需要 GPU、模型权重或 API Key；工具不抓取网站，也不训练模型。
+CLI 在本机 CPU 上审计提供的 HTML 文件，只读 Streamlit 页面负责查看报告、筛选样本和对照源码片段。运行不需要 GPU、模型权重或 API Key。
 
 ![合成演示审计结果：原始字节、规范 DOM、DOM 加域名的测试集对训练集重合率依次为 25%、50%、25%](docs/images/demo-results.png)
 
