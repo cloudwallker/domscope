@@ -11,17 +11,7 @@ from domscope.viewer import load_bundle
 
 
 st.set_page_config(page_title="DOMScope · Structure Audit", page_icon="🔎", layout="wide")
-st.markdown("""<style>
-.block-container {max-width:1240px;padding-top:2.5rem;padding-bottom:3rem;}
-[data-testid="stMetric"] {background:white;border:1px solid #e0e7eb;border-radius:12px;padding:16px 20px;}
-[data-testid="stMetricValue"] {font-variant-numeric:tabular-nums;}
-h1 {letter-spacing:-.035em;font-weight:750!important;}
-.eyebrow {color:#11786a;font-size:12px;font-weight:700;letter-spacing:.15em;margin-bottom:12px;}
-.subhead {color:#617482;font-size:17px;line-height:1.65;max-width:760px;margin-bottom:22px;}
-.local-badge {display:inline-block;color:#11786a;background:#e5f3ed;border:1px solid #c7e4d9;padding:7px 12px;border-radius:30px;font-size:12px;letter-spacing:.07em;}
-[data-testid="stTabs"] {margin-top:20px;}
-@media(max-width:600px){.block-container{padding:1.2rem 1rem;}h1{font-size:2rem!important;}.subhead{font-size:15px;}}
-</style>""", unsafe_allow_html=True)
+st.markdown("<style>" + Path(__file__).with_name("ui.css").read_text(encoding="utf-8") + "</style>", unsafe_allow_html=True)
 
 with st.sidebar:
     st.markdown("## DOMScope")
@@ -61,9 +51,14 @@ try:
     bundle = load_bundle(Path(report_path))
 except ReportError as exc:
     st.error(t("无法读取报告：", "Unable to read report: ") + str(exc))
+    st.info(t("在新的输出目录重新运行审计，然后在左侧选择新的 summary.json。下面的命令使用随附演示；审计自己的数据时替换 manifest 路径。",
+              "Run the audit in a new output folder, then select its summary.json in the sidebar. The command below uses the bundled demo; replace the manifest path for your own data."))
+    st.code("python -m domscope audit --manifest examples/manifest.jsonl --out outputs/new-audit", language="bash")
     st.stop()
 
 summary, samples, groups = bundle["summary"], bundle["samples"], bundle["groups"]
+st.caption(t("已加载报告：", "Loaded report: ") + Path(report_path).name + " · " +
+           t("切换筛选只改变当前视图，更新报告请重新运行审计。", "Filters change this view. Run the audit again to update the report."))
 if summary["data_kind"] == "synthetic":
     st.markdown('<span class="local-badge">' + t("合成演示数据 · 用于核对工具行为", "SYNTHETIC DEMO · FOR TOOL VERIFICATION") + '</span>', unsafe_allow_html=True)
 else:
@@ -123,7 +118,7 @@ with cases_tab:
     st.subheader(t("从统计回到证据", "Follow the numbers to the evidence"))
     dom_only = st.checkbox(t("只看原始不重合、DOM 重合的留出样本", "Only held-out samples with raw-unseen, DOM-seen structure"),
                            value=any(s["dom_only_seen_in_train"] for s in samples), key="dom_only")
-    filters = st.columns(4)
+    filters = st.columns(2) + st.columns(2)
     all_label = t("全部", "All")
     source = filters[0].selectbox(t("来源", "Source"), [all_label] + sorted({s["source"] for s in samples}), key="source")
     split = filters[1].selectbox(t("划分", "Split"), [all_label, "train", "val", "test"], key="split")
@@ -136,8 +131,11 @@ with cases_tab:
                 and (group_id == all_label or s["dom_hash"] == group_id)
                 and (label == all_label or (s["label"] == 0 and label.startswith("0"))
                      or (s["label"] == 1 and label.startswith("1")) or (s["label"] is None and label in ("未标注", "Unlabeled")))]
+    st.caption(t("当前筛选匹配", "Matching the current filters:") + f" {len(filtered)} / {len(samples)} " + t("个样本", "samples"))
     if not filtered:
         st.info(t("此筛选下没有样本。", "No samples match these filters."))
+        st.caption(t("将来源、划分、标签或结构组设为「全部」，或取消上方的留出样本限制。",
+                     "Choose All for source, split, label or group, or clear the held-out sample restriction above."))
     else:
         sid = st.selectbox(t("查看样本", "Inspect a sample"), [s["sample_id"] for s in filtered], key="sample")
         selected = next(s for s in filtered if s["sample_id"] == sid)

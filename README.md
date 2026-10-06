@@ -1,5 +1,9 @@
 # DOMScope
 
+中文简介：离线 HTML 结构审计与证据查看器：比较跨划分重合和标签冲突，通过中英界面筛选样本、检查惰性源码并导出报告。
+
+English summary: An offline HTML structure audit and evidence viewer with Chinese/English report navigation, sample filters, inert source previews and exports.
+
 English | [中文](README_ZH.md)
 
 An offline audit tool for structural overlap and label conflicts in HTML datasets. DOMScope compares saved HTML pages as raw bytes, normalized DOM trees, and DOM plus complete hostname. Its reports trace each result back to individual samples.
