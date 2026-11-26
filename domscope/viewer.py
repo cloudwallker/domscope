@@ -103,7 +103,9 @@ def load_bundle(path: Path) -> dict:
         samples = list(csv.DictReader(io.StringIO(contents["samples"].decode("utf-8-sig"))))
         groups = list(csv.DictReader(io.StringIO(contents["groups"].decode("utf-8-sig"))))
         issues = list(csv.DictReader(io.StringIO(contents["issues"].decode("utf-8-sig"))))
-        cases = [json.loads(line) for line in contents["cases"].decode("utf-8").splitlines() if line]
+        # Unicode line and paragraph separators can be literal content inside a JSON string.
+        with io.TextIOWrapper(io.BytesIO(contents["cases"]), encoding="utf-8") as evidence:
+            cases = [json.loads(line) for line in evidence if line != "\n"]
         ids = [r["sample_id"] for r in samples]
         if (not ids or len(ids) != summary["counts"]["valid"] or len(set(ids)) != len(ids)
                 or any(not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}", sid) for sid in ids)

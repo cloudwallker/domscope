@@ -25,6 +25,21 @@ def test_bundle_loads_all_evidence_with_typed_values(bundle):
     assert len(data["groups"]) == 5
 
 
+@pytest.mark.parametrize("line_ending", [b"\n", b"\r\n"])
+def test_jsonl_preserves_unicode_separators_inside_previews(tmp_path, line_ending):
+    html = "<!doctype html><p>First\u2028line\u2029second paragraph\u0085end</p>"
+    (tmp_path / "page.html").write_text(html, encoding="utf-8")
+    manifest = tmp_path / "manifest.jsonl"
+    records = [{"sample_id": sid, "html_path": "page.html", "split": "train", "source": "synthetic"}
+               for sid in ("one", "two")]
+    manifest.write_text("\n".join(map(json.dumps, records)), encoding="utf-8")
+    report = write_report(audit_manifest(manifest), tmp_path / "report")
+    evidence = report.parent / "cases.jsonl"
+    evidence.write_bytes(evidence.read_bytes().replace(b"\n", line_ending))
+    cases = load_bundle(report)["cases"]
+    assert {sid: case["raw_preview"] for sid, case in cases.items()} == {"one": html, "two": html}
+
+
 @pytest.mark.parametrize("mutation", ["path", "version", "missing", "case_ids"])
 def test_viewer_rejects_invalid_or_escaping_bundle(bundle, mutation):
     summary = json.loads(bundle.read_text(encoding="utf-8"))
@@ -65,6 +80,25 @@ def test_missing_report_shows_start_instructions_not_exception(tmp_path, monkeyp
     assert not app.exception
     assert app.info
     assert any("python -m domscope audit" in c.value for c in app.code)
+
+
+def test_case_search_matches_id_raw_and_dom_previews_with_other_filters(bundle, monkeypatch):
+    from streamlit.testing.v1 import AppTest
+    monkeypatch.setattr(sys, "argv", ["app.py", "--report", str(bundle)])
+    app = AppTest.from_file(ROOT / "app.py", default_timeout=15).run()
+    app.checkbox(key="dom_only").uncheck().run()
+    app.text_input(key="case_query").input("oRCHARd").run()
+    assert app.selectbox(key="sample").options == ["A1", "A4"]
+    app.selectbox(key="split").select("test").run()
+    assert app.selectbox(key="sample").options == ["A4"]
+    app.text_input(key="case_query").input("b1").run()
+    assert not any(box.key == "sample" for box in app.selectbox)
+    app.selectbox(key="split").select("train").run()
+    assert app.selectbox(key="sample").options == ["B1"]
+    app.text_input(key="case_query").input('"children":[').run()
+    assert len(app.selectbox(key="sample").options) > 1
+    app.text_input(key="case_query").input("").run()
+    assert not app.exception
 
 
 def large_bundle(tmp_path, count, unicode_preview=False):
