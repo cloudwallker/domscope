@@ -125,17 +125,27 @@ with cases_tab:
     label = filters[2].selectbox(t("标签", "Label"), [all_label, "0 · benign", "1 · phishing", t("未标注", "Unlabeled")], key="label")
     group_id = filters[3].selectbox(t("结构组", "DOM group"), [all_label] + [g["group_id"] for g in groups],
                                   format_func=lambda value: value[:12] if value != all_label else value, key="group")
+    query = st.text_input(t("搜索样本 ID 或预览片段", "Search sample IDs or previews"), key="case_query",
+                          help=t("搜索已保存的原始 HTML 和规范 DOM 片段，忽略大小写。",
+                                 "Case-insensitive search across saved raw HTML and canonical DOM previews.")).strip().casefold()
     filtered = [s for s in samples if (not dom_only or s["dom_only_seen_in_train"])
                 and (source == all_label or s["source"] == source)
                 and (split == all_label or s["split"] == split)
                 and (group_id == all_label or s["dom_hash"] == group_id)
                 and (label == all_label or (s["label"] == 0 and label.startswith("0"))
                      or (s["label"] == 1 and label.startswith("1")) or (s["label"] is None and label in ("未标注", "Unlabeled")))]
+    if query:
+        matches = []
+        for sample in filtered:
+            case = bundle["cases"][sample["sample_id"]]
+            if any(query in case[field].casefold() for field in ("sample_id", "raw_preview", "dom_preview")):
+                matches.append(sample)
+        filtered = matches
     st.caption(t("当前筛选匹配", "Matching the current filters:") + f" {len(filtered)} / {len(samples)} " + t("个样本", "samples"))
     if not filtered:
         st.info(t("此筛选下没有样本。", "No samples match these filters."))
-        st.caption(t("将来源、划分、标签或结构组设为「全部」，或取消上方的留出样本限制。",
-                     "Choose All for source, split, label or group, or clear the held-out sample restriction above."))
+        st.caption(t("可以清空搜索词、将筛选设为「全部」，或取消留出样本限制。",
+                     "Clear the search, choose All in the filters, or clear the held-out sample restriction."))
     else:
         sid = st.selectbox(t("查看样本", "Inspect a sample"), [s["sample_id"] for s in filtered], key="sample")
         selected = next(s for s in filtered if s["sample_id"] == sid)

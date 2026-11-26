@@ -1,8 +1,8 @@
 # DOMScope
 
-中文简介：离线 HTML 结构审计与证据查看器：比较跨划分重合和标签冲突，通过中英界面筛选样本、检查惰性源码并导出报告。
+DOMScope 离线比较 HTML 数据集的跨划分重合和标签冲突，支持按样本 ID、HTML 和 DOM 预览搜索证据，并导出报告。
 
-English summary: An offline HTML structure audit and evidence viewer with Chinese/English report navigation, sample filters, inert source previews and exports.
+DOMScope audits HTML datasets offline for cross-split overlap and label conflicts. Its bilingual viewer searches sample IDs and HTML or DOM previews and exports the evidence.
 
 [English](README.md) | 中文
 
@@ -48,6 +48,8 @@ streamlit run app.py -- --report outputs/demo/summary.json
 ```
 
 打开 Streamlit 输出的本地地址。界面默认中文，可切换英文；概览中比较两种样本口径，案例中筛选样本并查看片段，导出页提供报告下载。HTML 源码以文本显示。
+
+在**案例**页取消「只看原始不重合、DOM 重合的留出样本」，搜索 `orchard` 可找到演示样本 A1 和 A4。再把**划分**设为 `test`，就只显示 A4。搜索按字面匹配子串，忽略大小写，范围包括样本 ID 和报告已保存的预览片段（每段最多 4,000 个字符）。
 
 **已有内容的输出目录会被拒绝。** 重复演示时改用新目录，例如 `outputs/demo-2`，同时把查看器路径改为 `outputs/demo-2/summary.json`。修改输入后需要重新运行 CLI；刷新查看器不会重新计算。
 
